@@ -128,7 +128,18 @@ Main:
         call    [glRecti]
         push    ebx                     ; hdc
         call    [w32SwapBuffers]
+        push    'C'
+        call    [w32GetAsyncKeyState]
+        push    eax
+        push    11h                     ; VK_CONTROL
+        call    [w32GetAsyncKeyState]
+        pop     ecx
+        and     eax,8000h
+        and     ecx,8000h
+        and     eax,ecx
+        jnz     .exit
         jmp     .mainLoop
+    .exit:
         ret
 Start:
         push    @Kernel32
