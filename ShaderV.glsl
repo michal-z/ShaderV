@@ -1,16 +1,21 @@
+float Plot(vec2 st, float pct)
+{
+  return smoothstep(pct - 0.02, pct, st.y) - smoothstep(pct, pct + 0.02, st.y);
+}
 
 void main()
 {
-  float t = gl_TexCoord[0].s * 0.001;
+  float time = gl_TexCoord[0].s * 0.001;
 
-  vec2 p = -1.0 + 2.0 * (gl_FragCoord.xy / vec2(1280, 720));
-  p.x *= 1.777;
+  vec2 st = -1.0 + 2.0 * (gl_FragCoord.xy / vec2(1280, 720));
+  st *= 2.0;
 
-  float c = 1.0;
-  if (length(p) < 0.8)
-  {
-    c = 0.25f + sin(t * 0.75);
-  }
+  float y = sin(pow(st.x, 2.5) + 2.0 * time);
 
-  gl_FragColor = c * vec4(p, 0.15, 1.0);
+  vec3 color = vec3(y);
+
+  float pct = Plot(st, y);
+  color = pct * vec3(0.0, 1.0, 0.0);
+
+  gl_FragColor = vec4(color, 1.0);
 }
