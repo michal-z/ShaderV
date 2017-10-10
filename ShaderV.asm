@@ -128,7 +128,7 @@ Main:
         call    [glRecti]
         push    ebx                     ; hdc
         call    [w32SwapBuffers]
-        push    'C'
+        push    'Q'
         call    [w32GetAsyncKeyState]
         push    eax
         push    11h                     ; VK_CONTROL
