@@ -7,10 +7,10 @@ void main()
   p.x *= 1.777;
 
   float c = 1.0;
-  if (length(p) < 0.5)
+  if (length(p) < 0.8)
   {
-    c = 0.75;
+    c = 0.25f + sin(t * 0.75);
   }
 
-  gl_FragColor = c * vec4(p, 0.5, 1.0);
+  gl_FragColor = c * vec4(p, 0.15, 1.0);
 }
