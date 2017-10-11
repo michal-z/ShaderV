@@ -7,6 +7,9 @@ macro GetFunc lib*,name* {
         call    [w32GetProcAddress]
         mov     [name],eax
 }
+macro calli addr* {
+        call    [addr]
+}
 
 section '.text' code readable executable
 
@@ -19,35 +22,35 @@ section '.text' code readable executable
         push    0                       ; dwShareMode
         push    0x80000000              ; dwDesiredAccess = GENERIC_READ
         push    ShaderFileName          ; lpFileName
-        call    [w32CreateFile]
+        calli   w32CreateFile
         cmp     eax,0xFFFFFFFF
         je      .skip
         mov     ebx,eax                 ; ebx = fileHandle
         push    0                       ; lpFileHighSize
         push    ebx                     ; hFile = fileHandle
-        call    [w32GetFileSize]
+        calli   w32GetFileSize
         mov     esi,eax                 ; esi = fileSize
         push    0                       ; lpOverlapped
         push    BytesRead               ; lpNumberOfBytesRead
         push    esi                     ; nNumberOfBytesToRead = fileSize
         push    [ShaderCode]            ; lpBuffer
         push    ebx                     ; hFile = fileHandle
-        call    [w32ReadFile]
+        calli   w32ReadFile
         push    ebx                     ; fileHandle
-        call    [w32CloseHandle]
+        calli   w32CloseHandle
         push    20
-        call    [w32Sleep]
+        calli   w32Sleep
         mov     eax,[ShaderCode]
         mov     byte [eax+esi],0        ; store 0 to mark end of string
         push    [Shader]
-        call    [glDeleteProgram]       ; delete old shader
+        calli   glDeleteProgram         ; delete old shader
         push    ShaderCode              ; pointer to pointer of shader code
         push    1                       ; number of source strings
         push    0x8B30                  ; GL_FRAGMENT_SHADER
-        call    [glCreateShaderProgramv]
+        calli   glCreateShaderProgramv
         mov     [Shader],eax
         push    [Shader]                ; GL program to use
-        call    [glUseProgram]
+        calli   glUseProgram
     .skip:
         pop     esi ebx
         ret
@@ -57,7 +60,7 @@ section '.text' code readable executable
         push    0x00003000              ; flAllocationType = MEM_COMMIT|MEM_RESERVE
         push    64*1024                 ; dwSize = 64KB
         push    0                       ; lpAddress
-        call    [w32VirtualAlloc]
+        calli   w32VirtualAlloc
         mov     [ShaderCode],eax
         push    0                       ; lpParam
         push    0                       ; hInstance
@@ -71,35 +74,35 @@ section '.text' code readable executable
         push    0                       ; lpWindowName
         push    WinClassName            ; lpClassName
         push    0x00000008              ; dwExStyle = WS_EX_TOPMOST
-        call    [w32CreateWindowEx]
+        calli   w32CreateWindowEx
         push    eax                     ; hwnd
-        call    [w32GetDC]
+        calli   w32GetDC
         mov     ebx,eax                 ; ebx = hdc
         push    PixelFormatDesc
         push    ebx                     ; hdc
-        call    [w32ChoosePixelFormat]
+        calli   w32ChoosePixelFormat
         push    PixelFormatDesc
         push    eax                     ; pixel format id
         push    ebx                     ; hdc
-        call    [w32SetPixelFormat]
+        calli   w32SetPixelFormat
         push    ebx                     ; hdc
-        call    [wglCreateContext]
+        calli   wglCreateContext
         push    eax                     ; GL context
         push    ebx                     ; hdc
-        call    [wglMakeCurrent]
+        calli   wglMakeCurrent
         push    glUseProgram$
-        call    [wglGetProcAddress]
+        calli   wglGetProcAddress
         mov     [glUseProgram],eax
         push    glCreateShaderProgramv$
-        call    [wglGetProcAddress]
+        calli   wglGetProcAddress
         mov     [glCreateShaderProgramv],eax
         push    glDeleteProgram$
-        call    [wglGetProcAddress]
+        calli   wglGetProcAddress
         mov     [glDeleteProgram],eax
         call    CreateShader
         push    1                       ; ask for 1 ms timer resolution
-        call    [w32timeBeginPeriod]
-        call    [w32timeGetTime]
+        calli   w32timeBeginPeriod
+        calli   w32timeGetTime
         mov     edi,eax                 ; edi = beginTime
     .mainLoop:
         push    0x0001                  ; PM_REMOVE
@@ -107,36 +110,36 @@ section '.text' code readable executable
         push    0
         push    0
         push    Message
-        call    [w32PeekMessage]
+        calli   w32PeekMessage
         push    'S'
-        call    [w32GetAsyncKeyState]
+        calli   w32GetAsyncKeyState
         push    eax
         push    0x11                    ; VK_CONTROL
-        call    [w32GetAsyncKeyState]
+        calli   w32GetAsyncKeyState
         pop     ecx
         and     eax,0x8000
         and     ecx,0x8000
         and     eax,ecx
         jz      .1
         call    CreateShader
-    .1: call    [w32timeGetTime]
+    .1: calli   w32timeGetTime
         sub     eax,edi                 ; currentTime = time - beginTime
         push    eax
         fild    dword [esp]
         fstp    dword [esp]
-        call    [glTexCoord1f]
+        calli   glTexCoord1f
         push    1
         push    1
         push    -1
         push    -1
-        call    [glRecti]
+        calli   glRecti
         push    ebx                     ; hdc
-        call    [w32SwapBuffers]
+        calli   w32SwapBuffers
         push    'Q'
-        call    [w32GetAsyncKeyState]
+        calli   w32GetAsyncKeyState
         push    eax
         push    0x11                    ; VK_CONTROL
-        call    [w32GetAsyncKeyState]
+        calli   w32GetAsyncKeyState
         pop     ecx
         and     eax,0x8000
         and     ecx,0x8000
@@ -148,19 +151,19 @@ section '.text' code readable executable
 
   Start:
         push    Kernel32$
-        call    [w32LoadLibrary]
+        calli   w32LoadLibrary
         mov     [Kernel32],eax
         push    User32$
-        call    [w32LoadLibrary]
+        calli   w32LoadLibrary
         mov     [User32],eax
         push    Gdi32$
-        call    [w32LoadLibrary]
+        calli   w32LoadLibrary
         mov     [Gdi32],eax
         push    OpenGL32$
-        call    [w32LoadLibrary]
+        calli   w32LoadLibrary
         mov     [OpenGL32],eax
         push    WinMM$
-        call    [w32LoadLibrary]
+        calli   w32LoadLibrary
         mov     [WinMM],eax
         GetFunc Kernel32,w32ExitProcess
         GetFunc Kernel32,w32VirtualAlloc
@@ -185,10 +188,10 @@ section '.text' code readable executable
         GetFunc OpenGL32,wglCreateContext
         GetFunc OpenGL32,glTexCoord1f
         GetFunc OpenGL32,glRecti
-        call    [w32SetProcessDPIAware]
+        calli   w32SetProcessDPIAware
         call    Main
         push    0
-        call    [w32ExitProcess]
+        calli   w32ExitProcess
         ret
 
 section '.data' data readable writeable

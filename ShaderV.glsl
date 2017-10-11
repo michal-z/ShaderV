@@ -8,9 +8,9 @@ void main()
   float time = gl_TexCoord[0].s * 0.001;
 
   vec2 st = -1.0 + 2.0 * (gl_FragCoord.xy / vec2(1280, 720));
-  st *= 2.0;
+  st *= 2.3;
 
-  float y = sin(pow(st.x, 2.5) + 2.0 * time);
+  float y = sin(pow(st.x, 2.0) + 0.5 * time);
 
   vec3 color = vec3(y);
 
