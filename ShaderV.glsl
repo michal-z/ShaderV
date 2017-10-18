@@ -1,5 +1,3 @@
-#define PI 3.1415926
-
 float Plot(vec2 st, float pct)
 {
     return smoothstep(pct - 0.02, pct, st.y) - smoothstep(pct, pct + 0.02, st.y);
@@ -11,12 +9,14 @@ void main()
 
     vec2 st = -1.0 + 2.0 * (gl_FragCoord.xy / vec2(1280, 720));
 
-    float y = 1.0 - pow(max(0.0, abs(st.x) * 2.0 - 1.0), 3.5);
-
-    vec3 color = vec3(y);
+    float y = cos(sin(4.0 * st.x + time)) - 0.5;
 
     float pct = Plot(st, y);
-    color = pct * vec3(0.0, 1.0, 0.0);
+
+    vec3 colorA = vec3(0.149, 0.141, 0.912);
+    vec3 colorB = vec3(1.000, 0.833, 0.224);
+
+    vec3 color = pct * mix(colorA, colorB, y);
 
     gl_FragColor = vec4(color, 1.0);
 }
