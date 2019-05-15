@@ -63,8 +63,8 @@ Main:   push    0x04                    ; flProtect = PAGE_READWRITE
         push    0                       ; hWndParent
         push    720                     ; nHeight
         push    1280                    ; nWidth
-        push    0                       ; y
-        push    0                       ; x
+        push    10                      ; y
+        push    10                      ; x
         push    0x90000000              ; dwStyle = WS_POPUP|WS_VISIBLE
         push    0                       ; lpWindowName
         push    WinClassName            ; lpClassName

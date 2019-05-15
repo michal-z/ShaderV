@@ -1,6 +1,11 @@
-float Plot(vec2 st, float pct)
+vec4 qmul(vec4 a, vec4 b)
 {
-  return smoothstep(pct - 0.02, pct, st.y) - smoothstep(pct, pct + 0.02, st.y);
+  vec4 r;
+  r.w = a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z;
+  r.x = a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y;
+  r.y = a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x;
+  r.z = a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w;
+  return r;
 }
 
 void main()
@@ -11,12 +16,5 @@ void main()
 
   float y = cos(sin(4.0 * st.x + time)) - 0.5;
 
-  float pct = Plot(st, y);
-
-  vec3 colorA = vec3(0.149, 0.141, 0.912);
-  vec3 colorB = vec3(1.000, 0.833, 0.224);
-
-  vec3 color = pct * mix(colorA, colorB, y);
-
-  gl_FragColor = vec4(color, 1.0);
+  gl_FragColor = vec4(st, y, 1.0);
 }
