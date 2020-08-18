@@ -41,6 +41,8 @@ CreateShader:
         mov     byte [eax+esi],0        ; store 0 to mark end of string
         push    [Shader]
         call    [glDeleteProgram]       ; delete old shader
+        push    0
+        call    [glUseProgram]
         push    ShaderCode              ; pointer to pointer of shader code
         push    1                       ; number of source strings
         push    0x8B30                  ; GL_FRAGMENT_SHADER
@@ -63,8 +65,8 @@ Main:   push    0x04                    ; flProtect = PAGE_READWRITE
         push    0                       ; hWndParent
         push    720                     ; nHeight
         push    1280                    ; nWidth
-        push    10                      ; y
-        push    10                      ; x
+        push    41                      ; y
+        push    0                       ; x
         push    0x90000000              ; dwStyle = WS_POPUP|WS_VISIBLE
         push    0                       ; lpWindowName
         push    WinClassName            ; lpClassName
@@ -238,7 +240,7 @@ glTexCoord1f dd 0
 glRecti dd 0
 
 WinClassName db 'static',0
-ShaderFileName db 'ShaderV.glsl',0
+ShaderFileName db 'ShaderV.c',0
 
 Kernel32$ db 'Kernel32.dll',0
 User32$ db 'User32.dll',0
